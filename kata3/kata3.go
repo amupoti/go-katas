@@ -32,6 +32,7 @@ func (c Converter) convert(data []byte,num int) (string,error) {
 	fmt.Printf("Starting conversion! #%d\n",num)
 	sleep()
 	v:= Stock{}
+	v.ProductList = []Product{}
 	fmt.Printf("Unmarshal to XML! #%d\n",num)
 	err:=xml.Unmarshal(data,&v)
 	if nil!=err{
@@ -55,10 +56,10 @@ func readXMLFromServer()([]byte){
 
 	res, err := http.Get("http://127.0.0.1:2222/products")
 	defer res.Body.Close()
-	if err != nil {
+	if err != nil || res.StatusCode != 200 {
+		fmt.Printf("An error occurred! Received response with status %d\n",res.StatusCode	)
 	    panic(err.Error())
 	}
-
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 	    panic(err.Error())
